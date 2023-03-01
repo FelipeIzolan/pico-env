@@ -12,10 +12,10 @@ if cart and script then
   script:close()
 
   local __lua__ = string.find(cart_source, "__lua__") + 7
-  local __gfx__ = string.find(cart_source, "__gfx__")
+  local __gfx__ = string.find(cart_source, "__gfx__") - 1
 
   local p1 = string.sub(cart_source, 0, __lua__)
-  local p2 = string.sub(cart_source, __gfx__ - 1)
+  local p2 = string.sub(cart_source, __gfx__)
 
   local output = p1 .. script_source .. p2
   local writer = io.open(CART_PATH, "w")
