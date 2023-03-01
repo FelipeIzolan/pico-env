@@ -3,8 +3,9 @@
 ### installation:
 
 - ```git clone https://github.com/FelipeIzolan/pico8-setup.git```
-- edit pico8 in makefile.
-- build a legendary game!
+- edit PICO8 in makefile.
+- write your game in main.lua!
+- ```make debug```
 
 ### make:
 
