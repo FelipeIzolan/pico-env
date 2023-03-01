@@ -1,10 +1,12 @@
 # pico8-setup
 
-# installation
+### installation:
 
-wait!
+- ```git clone https://github.com/FelipeIzolan/pico8-setup.git```
+- edit pico8 in makefile.
+- build a legendary game!
 
-# make
+### make:
 
 - debug: compile and run the cartridge.
 - compile: compile the cartridge.
