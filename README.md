@@ -10,10 +10,10 @@
 ### make:
 
 - debug: 
-    compile and load the cartridge.
+    compile and run the cartridge.
 
 - compile: 
     compile the cartridge.
 
-- run: 
+- load: 
     load the cartridge.
