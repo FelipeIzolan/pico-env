@@ -3,8 +3,8 @@
 ### installation:
 
 - ```git clone https://github.com/FelipeIzolan/pico8-setup.git```
-- edit PICO8 in makefile.
-- write your game script in main.lua!
+- set pico.exe path in makefile.
+- write your game in src/main.lua!
 - ```make debug```
 
 ### make:
