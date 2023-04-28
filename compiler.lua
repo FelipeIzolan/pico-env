@@ -1,3 +1,5 @@
+Diet = require("luasrcdiet.main")
+
 CART_PATH = "./game.p8"
 SCRIPT_PATH = "./src/main.lua"
 RELATIVE_PATH = "./src/"
@@ -7,21 +9,21 @@ local script = io.open(SCRIPT_PATH)
 
 if cart and script then
   local cart_source = cart:read("*a")
-  local script_source = script:read("*a")
+  local main = script:read("*a")
   local module_source = {}
 
   cart:close()
   script:close()
 
-  script_source:gsub(
+  main:gsub(
     "require%(%p[%w|%p]+%p%)",
     function (m)
       -- extract path.
       local p = m:sub(10,#m-2)
 
       -- remove "require()" line.
-      local _,e = script_source:find(p)
-      script_source = script_source:sub(e + 3)
+      local _,e = main:find(p)
+      main = main:sub(e + 3)
 
       -- transform path to io.open().
       p = RELATIVE_PATH .. p:gsub("%.+", "/") .. ".lua"
@@ -49,14 +51,15 @@ if cart and script then
     p1 = string.sub(cart_source, 0, __lua__ + 7)
   end
 
-  local output = p1
+  local output = ""
 
   -- append all module.
-  for _, value in ipairs(module_source) do
+  for _,value in ipairs(module_source) do
     output = output .. value .. "\n"
   end
 
-  output = output .. script_source .. p2
+  output = Diet.optimize(Diet.MAXIMUM_OPTS,output..main)
+  output = p1 .. output .. p2
 
   -- write cartridge!
   local writer = io.open(CART_PATH, "w")
