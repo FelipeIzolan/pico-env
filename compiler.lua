@@ -4,6 +4,35 @@ CART_PATH = "./game.p8"
 SCRIPT_PATH = "./src/main.lua"
 RELATIVE_PATH = "./src/"
 
+PATTERNs = {
+  Q = "…",
+  W = "∧",
+  E = "░",
+  R = "➡️",
+  T = "⧗",
+  Y = "▤",
+  U = "⬆️",
+  I = "☉",
+  O = "🅾️",
+  P = "◆",
+  A = "█",
+  S = "★",
+  D = "⬇️",
+  F = "✽",
+  G = "●",
+  H = "♥",
+  J = "웃",
+  K = "⌂",
+  L = "⬅️",
+  Z = "▥",
+  X = "❎",
+  C = "🐱",
+  V = "ˇ",
+  B = "▒",
+  N = "♪",
+  M = "😐"
+}
+
 local cart = io.open(CART_PATH, "r")
 local script = io.open(SCRIPT_PATH)
 
@@ -58,8 +87,14 @@ if cart and script then
     output = output .. value .. "\n"
   end
 
+
   output = Diet.optimize(Diet.MAXIMUM_OPTS,output..main)
   output = p1 .. output .. p2
+
+  for key,pattern in pairs(PATTERNs) do
+    output = output:gsub("'"..key.."'", '"'..pattern..'"')
+    output = output:gsub('"'..key..'"', '"'..pattern..'"')
+  end
 
   -- write cartridge!
   local writer = io.open(CART_PATH, "w")
