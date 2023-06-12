@@ -92,8 +92,8 @@ if cart and script then
   output = p1 .. output .. p2
 
   for key,pattern in pairs(PATTERNs) do
-    output = output:gsub("'"..key.."'", '"'..pattern..'"')
-    output = output:gsub('"'..key..'"', '"'..pattern..'"')
+    output = output:gsub(key, pattern)
+    output = output:gsub(key, pattern)
   end
 
   -- write cartridge!
