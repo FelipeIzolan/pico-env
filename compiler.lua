@@ -93,7 +93,6 @@ if cart and script then
 
   for key,pattern in pairs(PATTERNs) do
     output = output:gsub(key, pattern)
-    output = output:gsub(key, pattern)
   end
 
   -- write cartridge!
