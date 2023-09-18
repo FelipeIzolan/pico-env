@@ -12,7 +12,7 @@ git clone https://github.com/FelipeIzolan/pico8-setup.git
 - Write your game in /src
 - ```make debug```
 
-## Makefile 🪧
+## Makefile 📜
 
 - debug - compile and run the cartridge.
 
@@ -20,9 +20,39 @@ git clone https://github.com/FelipeIzolan/pico8-setup.git
 
 - load - load the cartridge.
 
----
+## Modules 📦
 
-### Pico8 Pattern 🐱
+before compiler:
+```lua
+-- math.lua
+function area2d(x, y)
+    return x * y
+end
+```
+
+```lua
+-- main.lua
+
+require ("lib.math")
+
+function _draw()
+    print("area(10,2): " .. tostr(area2d(10,2)))
+end
+```
+
+after compiler:
+
+```lua
+function area2d(x, y)
+    return x * y
+end
+
+function _draw()
+    print("area(10,2): " .. tostr(area2d(10,2)))
+end
+```
+
+## Pico8 Pattern 🐱
 
 before compiler:
 ```lua
