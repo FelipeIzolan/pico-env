@@ -1,9 +1,10 @@
 Diet = require("luasrcdiet.main")
 
 REQUIRE_REGEX = "require[%s]?[%(]?%p[%w|%p]+%p[%)]?"
-CART_PATH = "./game.p8"
-SCRIPT_PATH = "./src/main.lua"
 RELATIVE_PATH = "./src/"
+
+CART_PATH = "./game.p8"
+SCRIPT_PATH = RELATIVE_PATH .. "main.lua"
 
 PATTERNs = {
   Q = "…",

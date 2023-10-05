@@ -72,7 +72,7 @@ M.DEFAULT_OPTS = merge(M.BASIC_OPTS, {
 --- Maximum optimizations enabled (all except experimental).
 -- @table MAXIMUM_OPTS
 M.MAXIMUM_OPTS = merge(M.DEFAULT_OPTS, {
-  entropy = true,
+  entropy = false,
   eols = true,
   strings = true,
 })
