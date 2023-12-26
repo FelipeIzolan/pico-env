@@ -75,18 +75,17 @@ main:gsub(REQUIRE_PATTERN, callback)
 
 output = output .. main:gsub(REQUIRE_PATTERN, "")
 output = Minifier(output)
-print(output)
 
 -- WRITE CARTRIDGE
 
--- local __lua__ = cart:find("__lua__")
--- local __gfx__ = cart:find("__gfx__") - 1
+local __lua__ = cart:find("__lua__")
+local __gfx__ = cart:find("__gfx__") - 1
 
--- local p1 = cart:sub(0, __lua__+7)
--- local p2 = cart:sub(__gfx__)
+local p1 = cart:sub(0, __lua__+7)
+local p2 = cart:sub(__gfx__)
 
--- for key,pattern in pairs(PATTERNs) do
---   output = output:gsub(key, pattern)
--- end
+for key,pattern in pairs(PATTERNs) do
+  output = output:gsub(key, pattern)
+end
 
--- io.open(CART_PATH, "w"):write(p1..output..p2)
+io.open(CART_PATH, "w"):write(p1..output..p2)
