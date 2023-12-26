@@ -1,10 +1,11 @@
-Diet = require("luasrcdiet.main")
+Minifier = require("minifier")
 
-REQUIRE_REGEX = "require[%s]?[%(]?%p[%w|%p]+%p[%)]?"
-RELATIVE_PATH = "./src/"
+REQUIRE_PATTERN = "require[%s]?[%(]?%p[%w|%.|_]+%p[%)]?"
+REQUIRE_CAPTURE_PATTERN = "require[%s]?[%(]?[%p]([%w|%.|_]+)[%p][%)]?"
 
+SRC_PATH = "./src/"
 CART_PATH = "./game.p8"
-SCRIPT_PATH = RELATIVE_PATH .. "main.lua"
+SCRIPT_PATH = SRC_PATH .. "main.lua"
 
 PATTERNs = {
   Q = "…",
@@ -51,43 +52,41 @@ end
 -- MODULES
 
 function extract(m)
-  local _first_quote = m:find("[\"|\']")+1
-  local _last_quote = m:find("[\"|\']", _first_quote)-1
-  local module = m:sub(_first_quote,_last_quote) -- remove require and quotes;
+  m = m:match(REQUIRE_CAPTURE_PATTERN) -- remove require and quotes;
+  m = m:gsub("%.+", "/")
+  m = m .. ".lua"
+  m = SRC_PATH .. m
 
-  module = module:gsub("%.+", "/")
-  module = module .. ".lua"
-  module = RELATIVE_PATH .. module
-
-  return module
+  return m
 end
 
 function callback(m)
   local module = extract(m)
   local source = io.open(module):read("*a")
 
-  source:gsub(REQUIRE_REGEX, callback)
-
+  source:gsub(REQUIRE_PATTERN, callback)
   if not find(modules, module) then
     table.insert(modules, module)
-    output = output .. source:gsub(REQUIRE_REGEX,"")
+    output = output .. source:gsub(REQUIRE_PATTERN, "")
   end
 end
 
-main:gsub(REQUIRE_REGEX, callback)
-output = output .. main:gsub(REQUIRE_REGEX, "")
-output = Diet.optimize(Diet.MAXIMUM_OPTS,output)
+main:gsub(REQUIRE_PATTERN, callback)
+
+output = output .. main:gsub(REQUIRE_PATTERN, "")
+output = Minifier(output)
+print(output)
 
 -- WRITE CARTRIDGE
 
-local __lua__ = cart:find("__lua__")
-local __gfx__ = cart:find("__gfx__") - 1
+-- local __lua__ = cart:find("__lua__")
+-- local __gfx__ = cart:find("__gfx__") - 1
 
-local p1 = cart:sub(0, __lua__+7)
-local p2 = cart:sub(__gfx__)
+-- local p1 = cart:sub(0, __lua__+7)
+-- local p2 = cart:sub(__gfx__)
 
-for key,pattern in pairs(PATTERNs) do
-  output = output:gsub(key, pattern)
-end
+-- for key,pattern in pairs(PATTERNs) do
+--   output = output:gsub(key, pattern)
+-- end
 
-io.open(CART_PATH, "w"):write(p1..output..p2)
+-- io.open(CART_PATH, "w"):write(p1..output..p2)
