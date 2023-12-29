@@ -2,15 +2,45 @@
 --  | | | |_   _|_ _| |  / __|
 --  | |_| | | |  | || |__\__ \
 --   \___/  |_| |___|____|___/
+-- quoted(t, pt) -> returns start/end of quoted pattern.
+-- trim(s) -> removes whitespace from both sides.
+-- unspace(line, pt) -> removes whitespace between the pattern.
+-- unspace_comma(line) -> same as unspace(line, pt) but specific to comma(,).
 
 function quoted(t, pt)
- return t:find("\".+".. pt .. ".+\"")
+  return t:find("[\"|\'.+]![\"|\'].+".. pt .. ".+[\"|\']")
+end
+
+function trim(s)
+  return (s:gsub("^%s*(.-)%s*$", "%1"))
+end
+
+function unspace(line, pt)
+  local s = quoted(line, "%s+" .. pt .. "%s+")
+
+  if s then
+    return line
+  else
+    return line:gsub("%s+" .. pt .. "%s+", table.pack(pt:gsub(pt == "%%" and "" or "%%", ""))[1])
+  end
+end
+
+function unspace_comma(line)
+  local s = quoted(line, ",")
+
+  if s then
+    return line
+  else
+    return line:gsub(",%s+", ","):gsub("%s+,", ",")
+  end
 end
 
 --   ___ ___  __  __ __  __ ___ _  _ _____ ___ 
 --  / __/ _ \|  \/  |  \/  | __| \| |_   _/ __|
 -- | (_| (_) | |\/| | |\/| | _|| .` | | | \__ \
 --  \___\___/|_|  |_|_|  |_|___|_|\_| |_| |___/
+-- comment(line) -> remove comment.
+-- comment_block(line) -> remove comment-block.
 
 IS_COMMENT_BLOCK = false
 
@@ -44,25 +74,45 @@ function resolve_comment_block(line)
   end
 end
 
---  __   ___   ___ ___   _   ___ _    ___ ___ 
---  \ \ / /_\ | _ \_ _| /_\ | _ ) |  | __/ __|
---   \ V / _ \|   /| | / _ \| _ \ |__| _|\__ \
---    \_/_/ \_\_|_\___/_/ \_\___/____|___|___/
-
-function _local()
-
-end
+--   __  __   _   ___ _  _ 
+--  |  \/  | /_\ |_ _| \| |
+--  | |\/| |/ _ \ | || .` |
+--  |_|  |_/_/ \_\___|_|\_|
 
 return function (src)
   local iterator = src:gmatch("(.-)\n")
   local lines = {}
 
   for line in iterator do
-    -- comment
-    if IS_COMMENT_BLOCK then resolve_comment_block(line); goto continue end
-    if line:find("%-%-") and not line:find("%-%-%[%[") then line = comment(line); end
-    if line:find("%-%-%[%[") then line = comment_block(line); end
+    line = trim(line)
 
+    -- comments
+    if IS_COMMENT_BLOCK then resolve_comment_block(line); goto continue end
+    if line:find("%-%-") and not line:find("%-%-%[%[") then line = comment(line) end
+    if line:find("%-%-%[%[") then line = comment_block(line) end
+
+    --
+    if line:find("%s+=%s+")  then line = unspace(line, "=")  end
+    if line:find("%s+%.%.%s+") then line = unspace(line, "%.%.") end
+    if line:find(",") then line = unspace_comma(line) end
+
+    -- arithmetic
+    if line:find("%s+%+%s+") then line = unspace(line, "%+") end
+    if line:find("%s-%-%s-") then line = unspace(line, "%-") end
+    if line:find("%s+%*%s+") then line = unspace(line, "%*") end
+    if line:find("%s+%/%s+") then line = unspace(line, "%/") end
+    if line:find("%s+%%%s+") then line = unspace(line, "%%") end
+    if line:find("%s+%^%s+") then line = unspace(line, "%^") end
+
+    -- relational
+    if line:find("%s+==%s+") then line = unspace(line, "==") end
+    if line:find("%s+~=%s+") then line = unspace(line, "~=") end
+    if line:find("%s+>%s+")  then line = unspace(line, ">")  end
+    if line:find("%s+<%s+")  then line = unspace(line, "<")  end
+    if line:find("%s+>=%s+") then line = unspace(line, ">=") end
+    if line:find("%s+<=%s+") then line = unspace(line, "<=") end
+
+    line = line:gsub("%s+", " ")
     if line == "" then goto continue end
     table.insert(lines, line)
 
