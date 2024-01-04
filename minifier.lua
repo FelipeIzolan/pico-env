@@ -16,22 +16,13 @@ function trim(s)
 end
 
 function unspace(line, pt)
-  local s = quoted(line, "%s+" .. pt .. "%s+")
+  local s = quoted(line, pt)
 
   if s then
     return line
   else
-    return line:gsub("%s+" .. pt .. "%s+", table.pack(pt:gsub(pt == "%%" and "" or "%%", ""))[1])
-  end
-end
-
-function unspace_comma(line)
-  local s = quoted(line, ",")
-
-  if s then
-    return line
-  else
-    return line:gsub(",%s+", ","):gsub("%s+,", ",")
+    local v = table.pack(pt:gsub(pt == "%%" and "" or "%%", ""))[1]
+    return line:gsub("%s+" .. pt, v):gsub(pt .. "%s+", v)
   end
 end
 
@@ -54,6 +45,7 @@ function comment(line)
 
   return line
 end
+
 
 function comment_block(line)
   local _, e1 = quoted(line, "%-%-%[%[")
@@ -84,8 +76,6 @@ return function (src)
   local lines = {}
 
   for line in iterator do
-    line = trim(line)
-
     -- comments
     if IS_COMMENT_BLOCK then resolve_comment_block(line); goto continue end
     if line:find("%-%-") and not line:find("%-%-%[%[") then line = comment(line) end
@@ -94,7 +84,9 @@ return function (src)
     --
     if line:find("%s+=%s+")  then line = unspace(line, "=")  end
     if line:find("%s+%.%.%s+") then line = unspace(line, "%.%.") end
-    if line:find(",") then line = unspace_comma(line) end
+    if line:find(",") then line = unspace(line, ",") end
+    if line:find("{%s+") then line = unspace(line, "{") end
+    if line:find("%s+}") then line = unspace(line, "}") end
 
     -- arithmetic
     if line:find("%s+%+%s+") then line = unspace(line, "%+") end
@@ -112,7 +104,9 @@ return function (src)
     if line:find("%s+>=%s+") then line = unspace(line, ">=") end
     if line:find("%s+<=%s+") then line = unspace(line, "<=") end
 
+    line = trim(line)
     line = line:gsub("%s+", " ")
+
     if line == "" then goto continue end
     table.insert(lines, line)
 
