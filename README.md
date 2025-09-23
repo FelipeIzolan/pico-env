@@ -7,63 +7,18 @@ pico8-env is an environment to develop games to [pico8](https://www.lexaloffle.c
 ```
 git clone https://github.com/FelipeIzolan/pico8-env.git
 ```
+> [!NOTE]
+> 1. Set PICO8 in Makefile.
+> 2. Write your game in *./src*.
 
-- Edit PICO8 in Makefile
-- Write your game in /src
-- ```make debug```
+## ✨ Features
+
+- Handle modules.
+- <s>Minify the code.</s> (under development!)
 
 ## 📜 Makefile
 
-- debug - compile and run the cartridge.
-- compile - compile the cartridge.
-- load - load the cartridge.
+- **load** - Load the cartridge.
+- **debug** - Compile and run the cartridge.
+- **compile** - Compile the cartridge.
 
-## 📦 Modules 
-
-before compiler:
-```lua
--- math.lua
-function area2d(x, y)
-    return x * y
-end
-```
-
-```lua
--- main.lua
-
-require ("lib.math")
-
-function _draw()
-    print("area(10,2): " .. tostr(area2d(10,2)))
-end
-```
-
-after compiler:
-
-```lua
-function area2d(x, y)
-    return x * y
-end
-
-function _draw()
-    print("area(10,2): " .. tostr(area2d(10,2)))
-end
-```
-
-## Pico8 Pattern 🐱
-
-before compiler:
-```lua
-function _draw()
-    fillp("C")
-    circfill(32,32,8,9)
-end
-```
-
-after compiler:
-```lua
-function _draw()
-    fillp("🐱")
-    circfill(32,32,8,9)
-end
-```
