@@ -1,11 +1,7 @@
---[[
- PICO-8 SETUP | Felipe Izolan | 2023 
- **SET PICO.EXE PATH IN MAKEFILE!**
-]]
-
-require("lib.my_module")
+require("lib.math")
 
 function _draw()
   cls()
-  print(message,64-(#message*2),58,11)
+  local msg = "hello world"
+  print(msg, center(msg, 64), 64, 11)
 end

@@ -1,3 +1,3 @@
-function area2d(x,y)
-  return x*y
+function center(str, x)
+  return x - #str * 2
 end

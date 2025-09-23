@@ -1,26 +1,24 @@
-# pico8-setup
+# pico8-env
 
-pico8-setup is a environment to develop games to [pico8](https://www.lexaloffle.com/pico-8.php).
+pico8-env is an environment to develop games to [pico8](https://www.lexaloffle.com/pico-8.php).
 
-## Getting Started 🚀
+## 🚀 Getting Started
 
 ```
-git clone https://github.com/FelipeIzolan/pico8-setup.git
+git clone https://github.com/FelipeIzolan/pico8-env.git
 ```
 
 - Edit PICO8 in Makefile
 - Write your game in /src
 - ```make debug```
 
-## Makefile 📜
+## 📜 Makefile
 
 - debug - compile and run the cartridge.
-
 - compile - compile the cartridge.
-
 - load - load the cartridge.
 
-## Modules 📦
+## 📦 Modules 
 
 before compiler:
 ```lua
