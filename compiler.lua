@@ -1,5 +1,3 @@
-local req = "require%s?%(?%s*[\'\"][%w%._]+[\'\"]%s*%)?"
-local req_match = "require%s?%(?%s*[\'\"]([%w%._]+)[\'\"]%s*%)?"
 local upper2symbol = {
   Q = "…",
   W = "∧",
@@ -29,34 +27,32 @@ local upper2symbol = {
   M = "😐"
 }
 
-local main = io.open("./src/main.lua"):read("*a")
-local output = ""
+local output = io.open("./src/main.lua"):read("*a")
 
--- get modules -------------------------------------------------------------------
+-- resolve modules ---------------------------------------------------------------
 local map = {}
-local modules = {}
-function list(str)
-  for path in string.gmatch(str, req_match) do
+local req = "require%s?%(?%s*[\'\"][%w%._]+[\'\"]%s*%)?"
+local reqm = "require%s?%(?%s*[\'\"]([%w%._]+)[\'\"]%s*%)?"
+function resolve(str)
+  for path in string.gmatch(str, reqm) do
     if not map[path] then
       map[path] = true
-      local path = './src/' .. path:gsub('%.', '/') .. '.lua'
-      local src = io.open(path):read("*a")
-      list(src)
-      table.insert(modules, src)
+      local file = './src/' .. string.gsub(path, '%.', '/') .. '.lua'
+      local src = io.open(file):read("*a")
+      src = resolve(src)
+      str = string.gsub(str, req, src, 1)
+    else
+      str = string.gsub(str, req, "", 1)
     end
   end
+  return str
 end
 
-list(main)
--- build output ------------------------------------------------------------------
-for _, value in ipairs(modules) do
-  local module = value:gsub(req, '')
-  output = output .. module .. '\n'
-end
-output = output .. main:gsub(req, '')
+output = resolve(output)
+-- replace uppercase to symbol ---------------------------------------------------
 for key, pattern in pairs(upper2symbol) do
-  output = output:gsub(key, pattern)
+  output = string.gsub(output, key, pattern)
 end
--- create script.lua -------------------------------------------------------------
+-- create code.lua ---------------------------------------------------------------
 io.open("./out/code.lua", 'w'):write(output)
 ----------------------------------------------------------------------------------
