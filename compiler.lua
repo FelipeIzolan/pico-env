@@ -32,18 +32,23 @@ local output = io.open("./src/main.lua"):read("*a")
 -- resolve modules ---------------------------------------------------------------
 local map = {}
 local req = "require%s?%(?%s*[\'\"][%w%._]+[\'\"]%s*%)?"
-local reqm = "require%s?%(?%s*[\'\"]([%w%._]+)[\'\"]%s*%)?"
+local reqm = "(%-?%-?%s*)require%s?%(?%s*[\'\"]([%w%._]+)[\'\"]%s*%)?"
 function resolve(str)
-  for path in string.gmatch(str, reqm) do
+  for comment, path in string.gmatch(str, reqm) do
+    if string.sub(comment, 1, 2) == '--' then
+      goto continue
+    end
     if not map[path] then
       map[path] = true
       local file = './src/' .. string.gsub(path, '%.', '/') .. '.lua'
       local src = io.open(file):read("*a")
       src = resolve(src)
+      src = string.gsub(src, '%%', '%%%%')
       str = string.gsub(str, req, src, 1)
     else
       str = string.gsub(str, req, "", 1)
     end
+    ::continue::
   end
   return str
 end
